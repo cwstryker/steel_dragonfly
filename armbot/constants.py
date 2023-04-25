@@ -32,16 +32,16 @@ class DriveConstants:
 
 
 class ArmConstants:
-    # NOTE: Please do NOT use these values on your robot.
+    # These values were calculated using https://www.reca.lc/arm and the plant description in the physics.py file
     kMotorPort = 4
-    kP = 1
+    kP = 50
     kSVolts = 1
-    kGVolts = 1
-    kVVoltSecondPerRad = 0.5
-    kAVoltSecondSquaredPerRad = 0.1
+    kGVolts = 0.26
+    kVVoltSecondPerRad = 3.67
+    kAVoltSecondSquaredPerRad = 0.02
 
-    kMaxVelocityRadPerSecond = 3
-    kMaxAccelerationRadPerSecSquared = 10
+    kMaxVelocityRadPerSecond = 30
+    kMaxAccelerationRadPerSecSquared = 500
 
     kEncoderPorts = (4, 5)
     kEncoderPPR = 256
@@ -49,7 +49,7 @@ class ArmConstants:
 
     # The offset of the arm from the horizontal in its neutral position,
     # measured from the horizontal
-    kArmOffsetRads = 0.5
+    kArmOffsetRads = 0
 
 
 class AutoConstants:
