@@ -38,7 +38,7 @@ class ArmConstants:
     kSVolts = 1
     kGVolts = 0.26
     kVVoltSecondPerRad = 3.67
-    kAVoltSecondSquaredPerRad = 0.02
+    kAVoltSecondSquaredPerRad = 0.01
 
     kMaxVelocityRadPerSecond = 30
     kMaxAccelerationRadPerSecSquared = 500
