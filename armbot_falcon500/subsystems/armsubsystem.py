@@ -35,8 +35,12 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         # Motor configuration parameters
         config = phoenix5.TalonFXConfiguration()
         config.supplyCurrLimit.enable = False
-        config.supplyCurrLimit.triggerThresholdCurrent = constants.ArmConstants.kThresholdCurrent
-        config.supplyCurrLimit.triggerThresholdTime = constants.ArmConstants.kThresholdTime
+        config.supplyCurrLimit.triggerThresholdCurrent = (
+            constants.ArmConstants.kThresholdCurrent
+        )
+        config.supplyCurrLimit.triggerThresholdTime = (
+            constants.ArmConstants.kThresholdTime
+        )
         config.supplyCurrLimit.currentLimit = constants.ArmConstants.kHoldCurrent
         config.voltageCompSaturation = constants.ArmConstants.kCompVolts
 
@@ -72,13 +76,17 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         self, output: float, setpoint: wpimath.trajectory.TrapezoidProfile.State
     ) -> None:
         # Calculate the feedforward from the setpoint
-        self.ff_voltage = self.feedforward.calculate(setpoint.position, setpoint.velocity)
+        self.ff_voltage = self.feedforward.calculate(
+            setpoint.position, setpoint.velocity
+        )
 
         # Add the feedforward to the PID output to get the motor output
         motor_voltage = output + self.ff_voltage if self.isEnabled() else 0.0
 
         # Convert the control voltage to a percentage and set the motor
-        self.throttle = max(min(motor_voltage / constants.ArmConstants.kCompVolts, 1.0), -1.0)
+        self.throttle = max(
+            min(motor_voltage / constants.ArmConstants.kCompVolts, 1.0), -1.0
+        )
         self.motor.set(phoenix5.ControlMode.PercentOutput, self.throttle)
 
         # This is required to enable the Falcon 500 during simulation
@@ -89,6 +97,10 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
 
     def initSendable(self, builder: SendableBuilderImpl) -> None:
         builder.addFloatProperty("POSITION", self._getMeasurement, lambda x: None)
-        builder.addFloatProperty("FEED FORWARD", lambda: self.ff_voltage, lambda x: None)
+        builder.addFloatProperty(
+            "FEED FORWARD", lambda: self.ff_voltage, lambda x: None
+        )
         builder.addFloatProperty("THROTTLE", lambda: self.throttle, lambda x: None)
-        builder.addFloatProperty("getMotorOutputPercent", self.motor.getMotorOutputPercent, lambda x: None)
+        builder.addFloatProperty(
+            "getMotorOutputPercent", self.motor.getMotorOutputPercent, lambda x: None
+        )

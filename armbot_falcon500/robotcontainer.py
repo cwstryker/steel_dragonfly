@@ -63,7 +63,7 @@ class RobotContainer:
         self.driver_controller.b().onTrue(
             commands2.cmd.run(
                 lambda: self.moveArm(constants.ArmConstants.kArmOffsetRads),
-                self.robot_arm
+                self.robot_arm,
             )
         )
 
