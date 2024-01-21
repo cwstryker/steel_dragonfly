@@ -7,7 +7,7 @@ import commands2
 import wpimath.controller
 import wpimath.trajectory
 from wpilib import SendableBuilderImpl
-import ctre
+import phoenix5
 
 import constants
 
@@ -30,10 +30,10 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
             0,
         )
 
-        self.motor = ctre.TalonFX(constants.ArmConstants.kMotorPort)
+        self.motor = phoenix5.TalonFX(constants.ArmConstants.kMotorPort)
 
         # Motor configuration parameters
-        config = ctre.TalonFXConfiguration()
+        config = phoenix5.TalonFXConfiguration()
         config.supplyCurrLimit.enable = False
         config.supplyCurrLimit.triggerThresholdCurrent = constants.ArmConstants.kThresholdCurrent
         config.supplyCurrLimit.triggerThresholdTime = constants.ArmConstants.kThresholdTime
@@ -44,7 +44,7 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         self.motor.configFactoryDefault()
         self.motor.configAllSettings(config)
         self.motor.clearStickyFaults()
-        self.motor.setNeutralMode(ctre.NeutralMode.Brake)
+        self.motor.setNeutralMode(phoenix5.NeutralMode.Brake)
         self.motor.enableVoltageCompensation(False)
 
         self.encoder = wpilib.Encoder(
@@ -79,10 +79,10 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
 
         # Convert the control voltage to a percentage and set the motor
         self.throttle = max(min(motor_voltage / constants.ArmConstants.kCompVolts, 1.0), -1.0)
-        self.motor.set(ctre.ControlMode.PercentOutput, self.throttle)
+        self.motor.set(phoenix5.ControlMode.PercentOutput, self.throttle)
 
         # This is required to enable the Falcon 500 during simulation
-        ctre.Unmanaged.feedEnable(100)
+        phoenix5.Unmanaged.feedEnable(100)
 
     def _getMeasurement(self) -> float:
         return self.encoder.getDistance() + constants.ArmConstants.kArmOffsetRads

@@ -54,11 +54,13 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         self, output: float, setpoint: wpimath.trajectory.TrapezoidProfile.State
     ) -> None:
         # Calculate the feedforward from the setpoint
-        self.ff_voltage = self.feedforward.calculate(setpoint.position, setpoint.velocity)
+        self.ff_voltage = self.feedforward.calculate(
+            setpoint.position, setpoint.velocity
+        )
         self.output = output
 
         # Add the feedforward to the PID output to get the motor output
-        self.motor_voltage = output + self.ff_voltage  if self.isEnabled() else 0.0
+        self.motor_voltage = output + self.ff_voltage if self.isEnabled() else 0.0
         self.motor.setVoltage(self.motor_voltage)
 
     def _getMeasurement(self) -> float:
@@ -67,4 +69,6 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
     def initSendable(self, builder: SendableBuilderImpl) -> None:
         builder.addFloatProperty("Position", self._getMeasurement, lambda x: None)
         builder.addFloatProperty("Feedforward", lambda: self.ff_voltage, lambda x: None)
-        builder.addFloatProperty("Motor Voltage", lambda: self.motor_voltage, lambda x: None)
+        builder.addFloatProperty(
+            "Motor Voltage", lambda: self.motor_voltage, lambda x: None
+        )

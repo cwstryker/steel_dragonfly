@@ -56,6 +56,7 @@ class PhysicsEngine:
             math.radians(-75),
             math.radians(255),
             True,
+            math.radians(0),
         )
         self.encoderSim = wpilib.simulation.EncoderSim(robot.container.robot_arm.encoder)
         self.motorSim = robot.container.robot_arm.motor.getSimCollection()
