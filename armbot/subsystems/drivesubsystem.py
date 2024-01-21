@@ -2,14 +2,13 @@
 # Open Source Software; you can modify and/or share it under the terms of
 # the WPILib BSD license file in the root directory of this project.
 
+import commands2
+import constants
 import wpilib
 import wpilib.drive
-import commands2
-
-import constants
 
 
-class DriveSubsystem(commands2.SubsystemBase):
+class DriveSubsystem(commands2.Subsystem):
     # Creates a new DriveSubsystem
     def __init__(self) -> None:
         super().__init__()

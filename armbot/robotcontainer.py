@@ -5,9 +5,7 @@
 import commands2
 import commands2.button
 import commands2.cmd
-
 import constants
-
 from subsystems.armsubsystem import ArmSubsystem
 from subsystems.drivesubsystem import DriveSubsystem
 

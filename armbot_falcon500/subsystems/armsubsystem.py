@@ -2,14 +2,13 @@
 # Open Source Software; you can modify and/or share it under the terms of
 # the WPILib BSD license file in the root directory of this project.
 
-import wpilib
 import commands2
+import constants
+import phoenix5
+import wpilib
 import wpimath.controller
 import wpimath.trajectory
-from wpilib import SendableBuilderImpl
-import phoenix5
-
-import constants
+from wpiutil import SendableBuilder
 
 
 class ArmSubsystem(commands2.ProfiledPIDSubsystem):
@@ -95,7 +94,7 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
     def _getMeasurement(self) -> float:
         return self.encoder.getDistance() + constants.ArmConstants.kArmOffsetRads
 
-    def initSendable(self, builder: SendableBuilderImpl) -> None:
+    def initSendable(self, builder: SendableBuilder) -> None:
         builder.addFloatProperty("POSITION", self._getMeasurement, lambda x: None)
         builder.addFloatProperty(
             "FEED FORWARD", lambda: self.ff_voltage, lambda x: None
