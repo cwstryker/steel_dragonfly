@@ -12,14 +12,13 @@
 #
 # Examples can be found at https://github.com/robotpy/examples
 
-import wpilib
-import wpilib.simulation
-
-import wpimath.system.plant
-from pyfrc.physics.core import PhysicsInterface
-
 import math
 import typing
+
+import wpilib
+import wpilib.simulation
+import wpimath.system.plant
+from pyfrc.physics.core import PhysicsInterface
 
 if typing.TYPE_CHECKING:
     from robot import MyRobot
@@ -54,9 +53,14 @@ class PhysicsEngine:
             math.radians(-75),
             math.radians(255),
             True,
+            math.radians(0),
         )
-        self.encoderSim = wpilib.simulation.EncoderSim(robot.container.robot_arm.encoder)
-        self.motorSim = wpilib.simulation.PWMSim(robot.container.robot_arm.motor.getChannel())
+        self.encoderSim = wpilib.simulation.EncoderSim(
+            robot.container.robot_arm.encoder
+        )
+        self.motorSim = wpilib.simulation.PWMSim(
+            robot.container.robot_arm.motor.getChannel()
+        )
 
         # Create a Mechanism2d display of an Arm
         self.mech2d = wpilib.Mechanism2d(60, 60)
@@ -88,7 +92,6 @@ class PhysicsEngine:
 
         # Next, we update it
         self.armSim.update(tm_diff)
-
 
         # Finally, we set our simulated encoder's readings and simulated battery
         # voltage

@@ -5,9 +5,7 @@
 import commands2
 import commands2.button
 import commands2.cmd
-
 import constants
-
 from subsystems.armsubsystem import ArmSubsystem
 from subsystems.drivesubsystem import DriveSubsystem
 
@@ -43,7 +41,7 @@ class RobotContainer:
                     -self.driver_controller.getLeftY(),
                     -self.driver_controller.getRightX(),
                 ),
-                [self.robot_drive],
+                self.robot_drive,
             )
         )
 
@@ -55,19 +53,20 @@ class RobotContainer:
         """
 
         # Move the arm to 2 radians above horizontal when the 'A' button is pressed.
-        self.driver_controller.A().onTrue(
-            commands2.cmd.run(lambda: self.moveArm(2), [self.robot_arm])
+        self.driver_controller.a().onTrue(
+            commands2.cmd.run(lambda: self.moveArm(2), self.robot_arm)
         )
 
         # Move the arm to neutral position when the 'B' button is pressed
-        self.driver_controller.B().onTrue(
+        self.driver_controller.b().onTrue(
             commands2.cmd.run(
-                lambda: self.moveArm(constants.ArmConstants.kArmOffsetRads), [self.robot_arm]
+                lambda: self.moveArm(constants.ArmConstants.kArmOffsetRads),
+                self.robot_arm,
             )
         )
 
         # Disable the arm controller when Y is pressed
-        self.driver_controller.Y().onTrue(
+        self.driver_controller.y().onTrue(
             commands2.cmd.runOnce(lambda: self.robot_arm.disable())
         )
 
@@ -89,7 +88,7 @@ class RobotContainer:
 
         :returns: the command to run in autonomous
         """
-        return commands2.cmd.nothing()
+        return commands2.cmd.none()
 
     def moveArm(self, radians: int) -> None:
         self.robot_arm.setGoal(radians)

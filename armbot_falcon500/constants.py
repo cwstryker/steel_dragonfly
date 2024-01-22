@@ -58,7 +58,6 @@ class ArmConstants:
     kCompVolts = 11.0
 
 
-
 class AutoConstants:
     kAutoTimeoutSeconds = 12
     kAutoShootTimeSeconds = 7

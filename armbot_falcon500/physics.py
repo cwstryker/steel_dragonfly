@@ -12,14 +12,13 @@
 #
 # Examples can be found at https://github.com/robotpy/examples
 
-import wpilib
-import wpilib.simulation
-
-import wpimath.system.plant
-from pyfrc.physics.core import PhysicsInterface
-
 import math
 import typing
+
+import wpilib
+import wpilib.simulation
+import wpimath.system.plant
+from pyfrc.physics.core import PhysicsInterface
 
 if typing.TYPE_CHECKING:
     from robot import MyRobot
@@ -45,8 +44,8 @@ class PhysicsEngine:
         self.armGearbox = wpimath.system.plant.DCMotor.falcon500(1)
 
         # Simulation classes help us simulate what's going on, including gravity.
-        # This sim represents an arm with 1 Falcon 500, a 300:1 reduction, a mass of 5kg,
-        # 30in overall arm length, range of motion in [-75, 255] degrees, and noise
+        # This sim represents an arm with 1 Falcon 500, a 300:1 reduction, a mass of
+        # 5kg, 30in overall arm length, range of motion in [-75, 255] degrees, and noise
         # with a standard deviation of 1 encoder tick.
         self.armSim = wpilib.simulation.SingleJointedArmSim(
             self.armGearbox,
@@ -56,8 +55,11 @@ class PhysicsEngine:
             math.radians(-75),
             math.radians(255),
             True,
+            math.radians(0),
         )
-        self.encoderSim = wpilib.simulation.EncoderSim(robot.container.robot_arm.encoder)
+        self.encoderSim = wpilib.simulation.EncoderSim(
+            robot.container.robot_arm.encoder
+        )
         self.motorSim = robot.container.robot_arm.motor.getSimCollection()
         self.motorSim.setBusVoltage(11.0)
 
@@ -85,9 +87,7 @@ class PhysicsEngine:
         """
 
         # First, we set our "inputs" (voltages)
-        self.armSim.setInput(
-            0, self.motorSim.getMotorOutputLeadVoltage()
-        )
+        self.armSim.setInput(0, self.motorSim.getMotorOutputLeadVoltage())
 
         # Next, we update it
         self.armSim.update(tm_diff)
