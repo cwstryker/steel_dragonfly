@@ -71,7 +71,7 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         self.ff_voltage = 0.0
         self.throttle = 0.0
 
-    def _useOutput(
+    def useOutput(
         self, output: float, setpoint: wpimath.trajectory.TrapezoidProfile.State
     ) -> None:
         # Calculate the feedforward from the setpoint
@@ -91,11 +91,11 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         # This is required to enable the Falcon 500 during simulation
         phoenix5.Unmanaged.feedEnable(100)
 
-    def _getMeasurement(self) -> float:
+    def getMeasurement(self) -> float:
         return self.encoder.getDistance() + constants.ArmConstants.kArmOffsetRads
 
     def initSendable(self, builder: SendableBuilder) -> None:
-        builder.addFloatProperty("POSITION", self._getMeasurement, lambda x: None)
+        builder.addFloatProperty("POSITION", self.getMeasurement, lambda x: None)
         builder.addFloatProperty(
             "FEED FORWARD", lambda: self.ff_voltage, lambda x: None
         )
