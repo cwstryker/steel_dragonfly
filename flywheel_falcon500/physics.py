@@ -32,25 +32,18 @@ class PhysicsEngine:
 
         self.physics_controller = physics_controller
 
-        # The arm gearbox represents a gearbox containing one Falcon 500 motor.
+        # This is a simulation of the Falcon 500 motor connected to a gearbox.
         self.gearbox = wpimath.system.plant.DCMotor.falcon500(1)
+
+        # This is a physics simulation of a motor connected to a flywheel.
+        # The DCMotorSim is used because it tracks position of the motor.
         self.flywheel_sim = wpilib.simulation.DCMotorSim(self.gearbox, GEAR_RATIO, MOI)
 
+        # This is a simulation of the Falcon 500 motor controller.
         self.falcon_sim = robot.container.flywheel.talonfx.sim_state
-        self.falcon_sim.set_supply_voltage(11.0)
 
-        # # Create a Mechanism2d display of an Arm
-        # self.mech2d = wpilib.Mechanism2d(60, 60)
-        # self.armBase = self.mech2d.getRoot("ArmBase", 30, 30)
-        # self.armTower = self.armBase.appendLigament(
-        #     "Arm Tower", 30, -90, 6, wpilib.Color8Bit(wpilib.Color.kBlue)
-        # )
-        # self.arm = self.armBase.appendLigament(
-        #     "Arm", 30, self.armSim.getAngle(), 6, wpilib.Color8Bit(wpilib.Color.kYellow)
-        # )
-        #
-        # # Put Mechanism to SmartDashboard
-        # wpilib.SmartDashboard.putData("Arm Sim", self.mech2d)
+        # Set the battery voltage at the motor controller.
+        self.falcon_sim.set_supply_voltage(wpilib.RobotController.getBatteryVoltage())
 
     def update_sim(self, now: float, tm_diff: float) -> None:
         """
@@ -66,10 +59,9 @@ class PhysicsEngine:
         feed_enable(100)  # keep the device enabled for the next 100 ms
 
         # First, we set our "inputs" (voltages)
-        voltage = self.falcon_sim.motor_voltage
-        self.flywheel_sim.setInputVoltage(voltage)
+        self.flywheel_sim.setInputVoltage(self.falcon_sim.motor_voltage)
 
-        # Next, we update it
+        # Next, we update the simulation state
         self.flywheel_sim.update(tm_diff)
 
         # Finally, we set our simulated encoder's readings (convert from radians to rotations)
@@ -78,7 +70,3 @@ class PhysicsEngine:
 
         velocity = self.flywheel_sim.getAngularVelocity() / (2 * math.pi)
         self.falcon_sim.set_rotor_velocity(velocity)
-
-        # # Update the mechanism arm angle based on the simulated arm angle
-        # # -> setAngle takes degrees, getAngle returns radians... >_>
-        # self.arm.setAngle(math.degrees(self.armSim.getAngle()))

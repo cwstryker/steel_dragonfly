@@ -7,7 +7,7 @@ import commands2
 from subsystems.flywheel_subsystem import FlywheelSubsystem
 
 
-class TestMoveFlywheel(commands2.Command):
+class AutoMoveFlywheel(commands2.Command):
     def __init__(self, flywheel: FlywheelSubsystem) -> None:
         super().__init__()
         self._flywheel = flywheel
@@ -19,8 +19,7 @@ class TestMoveFlywheel(commands2.Command):
         self.finished = False
 
     def execute(self) -> None:
-        if self._flywheel.median_velocity == 0:
-            self.finished = True
+        pass
 
     def end(self, interrupted: bool) -> None:
         if interrupted:

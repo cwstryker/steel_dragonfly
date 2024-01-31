@@ -58,14 +58,6 @@ class FlywheelSubsystem(Subsystem):
         # Create a simulation object
         self.sim_state = self.talonfx.sim_state
 
-        self.median_velocity_filter = wpimath.filter.MedianFilter(256)
-        self.update_median_velocity()
-
-    def update_median_velocity(self):
-        self.median_velocity = self.median_velocity_filter.calculate(
-            float(self.talonfx.get_velocity().value) ** 2
-        )
-
     def initSendable(self, builder: SendableBuilder) -> None:
         """Setup the SmartDashboard"""
         builder.addFloatProperty(
@@ -81,11 +73,7 @@ class FlywheelSubsystem(Subsystem):
         builder.addStringProperty(
             "Enabled", lambda: str(self.talonfx.get_device_enable()), lambda value: None
         )
-        builder.addFloatProperty(
-            "velocity_median", lambda: self.median_velocity, lambda value: None
-        )
 
     def move_to_position(self, position: float):
         """Move the flywheel to a specific position"""
         self.talonfx.set_control(self.request.with_position(position))
-        print(self.talonfx.get_device_enable())
