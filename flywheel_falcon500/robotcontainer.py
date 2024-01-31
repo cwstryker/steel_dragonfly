@@ -3,6 +3,10 @@
 # the WPILib BSD license file in the root directory of this project.
 
 import commands2
+from wpilib import SmartDashboard
+
+from commands.flywheel_commands import TestMoveFlywheel
+from subsystems.flywheel_subsystem import FlywheelSubsystem
 
 
 class RobotContainer:
@@ -11,8 +15,11 @@ class RobotContainer:
     """
 
     def __init__(self):
-        pass
+        self.flywheel = FlywheelSubsystem()
+        self.test_flywheel = TestMoveFlywheel(self.flywheel)
+        SmartDashboard.putData("Flywheel", self.flywheel)
+        SmartDashboard.putData("Test Flywheel", self.test_flywheel)
 
     def getAutonomousCommand(self) -> commands2.Command:
         """Returns the autonomous command"""
-        return commands2.cmd.none()
+        return self.test_flywheel
