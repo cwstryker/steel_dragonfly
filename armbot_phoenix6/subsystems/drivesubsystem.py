@@ -3,9 +3,10 @@
 # the WPILib BSD license file in the root directory of this project.
 
 import commands2
-import constants
 import wpilib
 import wpilib.drive
+
+import constants
 
 
 class DriveSubsystem(commands2.Subsystem):

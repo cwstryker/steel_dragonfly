@@ -43,9 +43,7 @@ class ArmConstants:
     kMaxVelocityRadPerSecond = 300
     kMaxAccelerationRadPerSecSquared = 1000
 
-    kEncoderPorts = (4, 5)
-    kEncoderPPR = 256
-    kEncoderDistancePerPulse = 2.0 * math.pi / kEncoderPPR
+    kGearRatio = 300
 
     # The offset of the arm from the horizontal in its neutral position,
     # measured from the horizontal

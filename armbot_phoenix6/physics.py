@@ -18,10 +18,10 @@ import wpimath.system.plant
 from phoenix6.unmanaged import feed_enable
 from pyfrc.physics.core import PhysicsInterface
 
+import constants
+
 if typing.TYPE_CHECKING:
     from robot import MyRobot
-
-GEAR_RATIO = 300
 
 
 class PhysicsEngine:
@@ -47,7 +47,7 @@ class PhysicsEngine:
         # with a standard deviation of 1 encoder tick.
         self.armSim = wpilib.simulation.SingleJointedArmSim(
             self.armGearbox,
-            GEAR_RATIO,
+            constants.ArmConstants.kGearRatio,
             wpilib.simulation.SingleJointedArmSim.estimateMOI(0.762, 5),
             0.762,
             math.radians(-75),
@@ -57,7 +57,7 @@ class PhysicsEngine:
         )
 
         # This is a simulation of the Falcon 500 motor controller.
-        self.falconSim = robot.container.flywheel.talonfx.sim_state
+        self.falconSim = robot.container.robot_arm.talonfx.sim_state
 
         # Set the battery voltage at the motor controller.
         self.falconSim.set_supply_voltage(wpilib.RobotController.getBatteryVoltage())
@@ -95,12 +95,18 @@ class PhysicsEngine:
         self.armSim.update(tm_diff)
 
         # Finally, we set our simulated encoder's readings (convert from radians to rotations)
-        position = self.armSim.getAngularPosition() / (2 * math.pi)
+        position = (
+            constants.ArmConstants.kGearRatio * self.armSim.getAngle() / (2 * math.pi)
+        )
         self.falconSim.set_raw_rotor_position(position)
 
-        velocity = self.armSim.getAngularVelocity() / (2 * math.pi)
+        velocity = (
+            constants.ArmConstants.kGearRatio
+            * self.armSim.getVelocity()
+            / (2 * math.pi)
+        )
         self.falconSim.set_rotor_velocity(velocity)
 
         # Update the mechanism arm angle based on the simulated arm angle
         # -> setAngle takes degrees, getAngle returns radians... >_>
-        self.arm.setAngle(math.degrees(self.armSim.getAngle()))
+        self.arm.setAngle(self.armSim.getAngleDegrees())

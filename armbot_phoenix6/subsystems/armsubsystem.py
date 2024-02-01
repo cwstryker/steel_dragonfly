@@ -2,13 +2,15 @@
 # Open Source Software; you can modify and/or share it under the terms of
 # the WPILib BSD license file in the root directory of this project.
 
+import math
+
 import commands2
-import constants
-import phoenix5
-import wpilib
 import wpimath.controller
 import wpimath.trajectory
+from phoenix6 import configs, controls, hardware, signals, unmanaged
 from wpiutil import SendableBuilder
+
+import constants
 
 
 class ArmSubsystem(commands2.ProfiledPIDSubsystem):
@@ -29,32 +31,28 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
             0,
         )
 
-        self.motor = phoenix5.TalonFX(constants.ArmConstants.kMotorPort)
+        self.talonfx = hardware.TalonFX(constants.ArmConstants.kMotorPort)
 
-        # Motor configuration parameters
-        config = phoenix5.TalonFXConfiguration()
-        config.supplyCurrLimit.enable = False
-        config.supplyCurrLimit.triggerThresholdCurrent = (
+        # Setup the motor configuration
+        talonfx_configs = configs.TalonFXConfiguration()
+        talonfx_configs.motor_output.neutral_mode = signals.NeutralModeValue.BRAKE
+
+        talonfx_currents = talonfx_configs.current_limits
+        talonfx_currents.supply_current_limit_enable = False
+        talonfx_currents.supply_current_threshold = (
             constants.ArmConstants.kThresholdCurrent
         )
-        config.supplyCurrLimit.triggerThresholdTime = (
-            constants.ArmConstants.kThresholdTime
-        )
-        config.supplyCurrLimit.currentLimit = constants.ArmConstants.kHoldCurrent
-        config.voltageCompSaturation = constants.ArmConstants.kCompVolts
+        talonfx_currents.supply_time_threshold = constants.ArmConstants.kThresholdTime
+        talonfx_currents.supply_current_limit = constants.ArmConstants.kHoldCurrent
 
-        # Configure the motor
-        self.motor.configFactoryDefault()
-        self.motor.configAllSettings(config)
-        self.motor.clearStickyFaults()
-        self.motor.setNeutralMode(phoenix5.NeutralMode.Brake)
-        self.motor.enableVoltageCompensation(False)
+        # Apply the motor configuration
+        self.talonfx.configurator.apply(talonfx_configs)
+        self.talonfx.configurator.clear_sticky_faults()
 
-        self.encoder = wpilib.Encoder(
-            constants.ArmConstants.kEncoderPorts[0],
-            constants.ArmConstants.kEncoderPorts[1],
-        )
+        # Create a simulation object
+        self.sim_state = self.talonfx.sim_state
 
+        # Create a feed forward voltage model
         self.feedforward = wpimath.controller.ArmFeedforward(
             constants.ArmConstants.kSVolts,
             constants.ArmConstants.kGVolts,
@@ -62,11 +60,8 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
             constants.ArmConstants.kAVoltSecondSquaredPerRad,
         )
 
-        self.encoder.setDistancePerPulse(
-            constants.ArmConstants.kEncoderDistancePerPulse
-        )
-
         # Start arm at rest in neutral position
+        self.talonfx.set_position(0)
         self.setGoal(constants.ArmConstants.kArmOffsetRads)
         self.ff_voltage = 0.0
         self.throttle = 0.0
@@ -82,24 +77,37 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         # Add the feedforward to the PID output to get the motor output
         motor_voltage = output + self.ff_voltage if self.isEnabled() else 0.0
 
-        # Convert the control voltage to a percentage and set the motor
-        self.throttle = max(
-            min(motor_voltage / constants.ArmConstants.kCompVolts, 1.0), -1.0
-        )
-        self.motor.set(phoenix5.ControlMode.PercentOutput, self.throttle)
+        # Limit the motor voltage to the interval (-12V, 12)
+        max_motor_voltage = constants.ArmConstants.kCompVolts
+        self.throttle = max(min(motor_voltage, max_motor_voltage), -max_motor_voltage)
+
+        # Set the motor voltage
+        request = controls.VoltageOut(0)
+        self.talonfx.set_control(request.with_output(motor_voltage))
 
         # This is required to enable the Falcon 500 during simulation
-        phoenix5.Unmanaged.feedEnable(100)
+        unmanaged.feed_enable(100)
 
     def getMeasurement(self) -> float:
-        return self.encoder.getDistance() + constants.ArmConstants.kArmOffsetRads
+        """Returns the position of the arm in radians"""
+        rotations = self.talonfx.get_position().value
+        return rotations / constants.ArmConstants.kGearRatio * (2 * math.pi)
 
     def initSendable(self, builder: SendableBuilder) -> None:
-        builder.addFloatProperty("POSITION", self.getMeasurement, lambda x: None)
         builder.addFloatProperty(
-            "FEED FORWARD", lambda: self.ff_voltage, lambda x: None
+            "ARM POSITION (radians)", self.getMeasurement, lambda x: None
+        )
+        builder.addFloatProperty(
+            "FEED FORWARD (volts)", lambda: self.ff_voltage, lambda x: None
         )
         builder.addFloatProperty("THROTTLE", lambda: self.throttle, lambda x: None)
         builder.addFloatProperty(
-            "getMotorOutputPercent", self.motor.getMotorOutputPercent, lambda x: None
+            "MOTOR VOLTAGE (volts)",
+            lambda: self.talonfx.get_motor_voltage().value,
+            lambda x: None,
+        )
+        builder.addFloatProperty(
+            "MOTOR POSITION (rotations)",
+            lambda: float(self.talonfx.get_position().value),
+            lambda value: None,
         )
