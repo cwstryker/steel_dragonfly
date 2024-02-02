@@ -85,9 +85,6 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         request = controls.VoltageOut(0)
         self.talonfx.set_control(request.with_output(motor_voltage))
 
-        # This is required to enable the Falcon 500 during simulation
-        unmanaged.feed_enable(100)
-
     def getMeasurement(self) -> float:
         """Returns the position of the arm in radians"""
         rotations = self.talonfx.get_position().value
