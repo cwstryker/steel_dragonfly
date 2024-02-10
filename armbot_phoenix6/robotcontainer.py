@@ -5,10 +5,11 @@
 import commands2
 import commands2.button
 import commands2.cmd
+
 import constants
+from commands.armcommand import TurnToAngleProfiled
 from subsystems.armsubsystem import ArmSubsystem
 from subsystems.drivesubsystem import DriveSubsystem
-from commands.armcommand import TurnToAngleProfiled
 
 
 class RobotContainer:
@@ -66,10 +67,8 @@ class RobotContainer:
             )
         )
 
-        # Move the arm to 1 radian above horizontal when the 'X' button is pressed
-        self.driver_controller.x().onTrue(
-            TurnToAngleProfiled(1, self.robot_arm)
-        )
+        # Momentarily move the arm to 1 radian above horizontal when the 'X' button is pressed
+        self.driver_controller.x().onTrue(TurnToAngleProfiled(1, self.robot_arm))
 
         # Disable the arm controller when Y is pressed
         self.driver_controller.y().onTrue(
