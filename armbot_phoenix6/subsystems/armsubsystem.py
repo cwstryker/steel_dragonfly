@@ -31,7 +31,7 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
             0,
         )
 
-        self.talonfx = hardware.TalonFX(constants.ArmConstants.kMotorPort)
+        self._talonfx = hardware.TalonFX(constants.ArmConstants.kMotorPort)
 
         # Setup the motor configuration
         talonfx_configs = configs.TalonFXConfiguration()
@@ -46,11 +46,11 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         talonfx_currents.supply_current_limit = constants.ArmConstants.kHoldCurrent
 
         # Apply the motor configuration
-        self.talonfx.configurator.apply(talonfx_configs)
-        self.talonfx.configurator.clear_sticky_faults()
+        self._talonfx.configurator.apply(talonfx_configs)
+        self._talonfx.configurator.clear_sticky_faults()
 
         # Create a simulation object
-        self.sim_state = self.talonfx.sim_state
+        self.sim_state = self._talonfx.sim_state
 
         # Create a feed forward voltage model
         self.feedforward = wpimath.controller.ArmFeedforward(
@@ -61,7 +61,7 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         )
 
         # Start arm at rest in neutral position
-        self.talonfx.set_position(0)
+        self._talonfx.set_position(0)
         self.setGoal(constants.ArmConstants.kArmOffsetRads)
         self.ff_voltage = 0.0
         self.throttle = 0.0
@@ -83,11 +83,11 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
 
         # Set the motor voltage
         request = controls.VoltageOut(0)
-        self.talonfx.set_control(request.with_output(motor_voltage))
+        self._talonfx.set_control(request.with_output(motor_voltage))
 
     def getMeasurement(self) -> float:
         """Returns the position of the arm in radians"""
-        rotations = self.talonfx.get_position().value
+        rotations = self._talonfx.get_position().value
         return rotations / constants.ArmConstants.kGearRatio * (2 * math.pi)
 
     def initSendable(self, builder: SendableBuilder) -> None:
@@ -100,11 +100,14 @@ class ArmSubsystem(commands2.ProfiledPIDSubsystem):
         builder.addFloatProperty("THROTTLE", lambda: self.throttle, lambda x: None)
         builder.addFloatProperty(
             "MOTOR VOLTAGE (volts)",
-            lambda: self.talonfx.get_motor_voltage().value,
+            lambda: self._talonfx.get_motor_voltage().value,
             lambda x: None,
         )
         builder.addFloatProperty(
             "MOTOR POSITION (rotations)",
-            lambda: float(self.talonfx.get_position().value),
+            lambda: float(self._talonfx.get_position().value),
             lambda value: None,
         )
+
+    def get_talonfx(self):
+        return self._talonfx

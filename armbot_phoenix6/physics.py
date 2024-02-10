@@ -57,7 +57,7 @@ class PhysicsEngine:
         )
 
         # This is a simulation of the Falcon 500 motor controller.
-        self.falconSim = robot.container.robot_arm.talonfx.sim_state
+        self.falconSim = robot.container.robot_arm._talonfx.sim_state
 
         # Set the battery voltage at the motor controller.
         self.falconSim.set_supply_voltage(wpilib.RobotController.getBatteryVoltage())

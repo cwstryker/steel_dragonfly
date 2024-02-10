@@ -8,6 +8,7 @@ import commands2.cmd
 import constants
 from subsystems.armsubsystem import ArmSubsystem
 from subsystems.drivesubsystem import DriveSubsystem
+from commands.armcommand import TurnToAngleProfiled
 
 
 class RobotContainer:
@@ -52,7 +53,7 @@ class RobotContainer:
         and then passing it to a JoystickButton.
         """
 
-        # Move the arm to 2 radians above horizontal when the 'A' button is pressed.
+        # Move the arm to 2 radians above horizontal when the 'A' button is pressed
         self.driver_controller.a().onTrue(
             commands2.cmd.run(lambda: self.moveArm(2), self.robot_arm)
         )
@@ -63,6 +64,11 @@ class RobotContainer:
                 lambda: self.moveArm(constants.ArmConstants.kArmOffsetRads),
                 self.robot_arm,
             )
+        )
+
+        # Move the arm to 1 radian above horizontal when the 'X' button is pressed
+        self.driver_controller.x().onTrue(
+            TurnToAngleProfiled(1, self.robot_arm)
         )
 
         # Disable the arm controller when Y is pressed
