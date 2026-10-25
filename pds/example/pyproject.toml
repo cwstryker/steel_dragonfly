@@ -22,4 +22,4 @@ components = [
 
 # Other pip packages to install, such as vendor packages (each element
 # is equivalent to a line in requirements.txt)
-requires = []
+requires = ["red-card-pds==1.0.0"]

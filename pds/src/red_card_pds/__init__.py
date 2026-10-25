@@ -2,8 +2,8 @@ import socket
 import wpilib
 
 
-MSG = \
-"""!!!!!!!!!!!!!     ATTENTION     !!!!!!!!!!!!!
+MSG = """
+  !!!!!!!!!!!!!     ATTENTION     !!!!!!!!!!!!!!
 
   This robot controller is running code that can 
   enable it without a driver station attached.

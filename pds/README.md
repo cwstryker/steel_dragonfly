@@ -47,5 +47,8 @@ To install this package in your non-robot application, build the wheel file.
 Then use the robotpy installer command to install the wheel file into your project's package module cache.
 
 ```commandline
-PS C:\NotARobotProject\python -m robotpy installer download red_card_pds-1.0.0-py3-none-any.whl
+PS C:\NotARobotProject\python -m pip install path/to/dist_folder/red_card_pds-1.0.0-py3-none-any.whl
+PS C:\NotARobotProject\python -m robotpy installer download path/to/dist_folder/red_card_pds-1.0.0-py3-none-any.whl
+PS C:\NotARobotProject\python -m robotpy sync --find-links path/to/dist_folder
+PS C:\NotARobotProject\python -m robotpy deploy
 ```
