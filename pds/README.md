@@ -14,17 +14,17 @@ It creates a safety hazard for everyone at the event.  RED CARD!!!  I mean it!
 ### Motivation
 
 With the introduction of the new SystemCore there is a surplus of old RoboRIO robot controllers.
-We wanted to the use a RoboRIO in a non-robot application, so I developed this code to automatically enable the robot without a driver station attached.
+We wanted to the use a RoboRIO in a non-robot application, so I developed this code to automatically enable the robot 
+without a driver station attached.
 
 ### Usage
 
-Use this in wpilib.TimedRobot implementation as shown...
+Use this package module in a wpilib.TimedRobot implementation as shown...
 
 ```python
 from red_card_pds import PseudoDriverStation
 
 ...
-
 
 class MyNotARobot(wpilib.TimedRobot):
 
@@ -36,19 +36,20 @@ class MyNotARobot(wpilib.TimedRobot):
         self.pds.update()
         ...
 
-
 ...
 ```
 
 ### Installation
 
 This module is intentionally not published on PyPI.
-To install this package in your non-robot application, build the wheel file.
-Then use the robotpy installer command to install the wheel file into your project's package module cache.
+To install this package in your non-robot application, build the wheel file and use the following commands to install 
+the wheel file.
+Keep a copy of the wheel file on your workstation, and use the --find-links option anytime use run the 'robotpy sync' 
+command.
 
 ```commandline
-PS C:\NotARobotProject\python -m pip install path/to/dist_folder/red_card_pds-1.0.0-py3-none-any.whl
-PS C:\NotARobotProject\python -m robotpy installer download path/to/dist_folder/red_card_pds-1.0.0-py3-none-any.whl
-PS C:\NotARobotProject\python -m robotpy sync --find-links path/to/dist_folder
-PS C:\NotARobotProject\python -m robotpy deploy
+PS C:\NotARobotProject> python -m pip install path/to/dist_folder/red_card_pds-1.0.0-py3-none-any.whl
+PS C:\NotARobotProject> python -m robotpy installer download path/to/dist_folder/red_card_pds-1.0.0-py3-none-any.whl
+PS C:\NotARobotProject> python -m robotpy sync --find-links path/to/dist_folder
+PS C:\NotARobotProject> python -m robotpy deploy
 ```
