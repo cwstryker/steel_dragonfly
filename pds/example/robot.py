@@ -1,7 +1,7 @@
 import inspect
 
 import wpilib
-from pds import PseudoDriverStation
+from red_card_pds import PseudoDriverStation
 
 
 class MyNotARobot(wpilib.TimedRobot):

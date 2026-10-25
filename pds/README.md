@@ -21,8 +21,10 @@ We wanted to the use a RoboRIO in a non-robot application, so I developed this c
 Use this in wpilib.TimedRobot implementation as shown...
 
 ```python
-from pds import PseudoDriverStation
+from red_card_pds import PseudoDriverStation
+
 ...
+
 
 class MyNotARobot(wpilib.TimedRobot):
 
@@ -33,6 +35,7 @@ class MyNotARobot(wpilib.TimedRobot):
     def robotPeriodic(self):
         self.pds.update()
         ...
+
 
 ...
 ```
