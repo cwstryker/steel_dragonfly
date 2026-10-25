@@ -1,0 +1,48 @@
+# Pseudo Driver Station
+
+As the name implies, this package module implements a fake driver station.
+This module allows a timed robot to enable itself immediately after the robot code starts executing.
+This module should only ever be used in non-robot applications.
+
+### This Warning Comes at the Start of the Book
+
+Using this module on an FRC robot is an egregious violation of game rules and the spirit of FIRST.
+It creates a safety hazard for everyone at the event.  RED CARD!!!  I mean it!
+
+**You have been warned!**
+
+### Motivation
+
+With the introduction of the new SystemCore there is a surplus of old RoboRIO robot controllers.
+We wanted to the use a RoboRIO in a non-robot application, so I developed this code to automatically enable the robot without a driver station attached.
+
+### Usage
+
+Use this in wpilib.TimedRobot implementation as shown...
+
+```python
+from pds import PseudoDriverStation
+...
+
+class MyNotARobot(wpilib.TimedRobot):
+
+    def robotInit(self):
+        self.pds = PseudoDriverStation()
+        ...
+
+    def robotPeriodic(self):
+        self.pds.update()
+        ...
+
+...
+```
+
+### Installation
+
+This module is intentionally not published on PyPI.
+To install this package in your non-robot application, build the wheel file.
+Then use the robotpy installer command to install the wheel file into your project's package module cache.
+
+```commandline
+PS C:\NotARobotProject\python -m robotpy installer download red_card_pds-1.0.0-py3-none-any.whl
+```

@@ -18,3 +18,5 @@ pip_cache
 
 networktables.*
 .idea/
+
+uv.lock
